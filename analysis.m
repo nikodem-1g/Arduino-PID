@@ -33,9 +33,9 @@ legend("Target position", "Actual position", "Error (\epsilon)", "\pm 2.5% band"
 
 set(gca, 'YGrid', 'on', 'XGrid', 'off')
 xlabel("Time (ms)")
-ylabel("Input shaft position (\circ)")
+ylabel("Motor shaft position (\circ)")
 yticks(0:30:360)
 ylim([0 360])
 xlim([2000 5000])
-%text(6100,10,'ng912', "FontWeight","bold", "FontSize",15)
+text(2010,7.5,'ng912', "FontWeight","bold", "FontSize",15)
 
