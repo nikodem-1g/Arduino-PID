@@ -23,9 +23,9 @@ const int minPWM = 40;
 const double deadzone = 1.0; //in degrees     
 
 int64_t oldCount = 0;
-double rpm = 0;          // raw output-shaft RPM
-double rpmFiltered = 0;  // smoothed output-shaft RPM
-const double rpmAlpha = 0.2;  // 0-1, lower = smoother but slower to respond
+double rpm = 0;          
+double rpmFiltered = 0;  
+const double rpmAlpha = 0.2;  
 
 ESP32Encoder encoder;
 
@@ -62,7 +62,7 @@ void loop()
   int64_t deltaCount = nowCount - oldCount;
   oldCount = nowCount;
 
-  rpm = ((double)deltaCount / CountsPerOutRev) / dt * 60.0;   // revs / sec * 60
+  rpm = ((double)deltaCount / CountsPerOutRev) / dt * 60.0;   
   rpmFiltered = rpmAlpha * rpm + (1.0 - rpmAlpha) * rpmFiltered;
 
   float angle = fmodf(((float)nowCount / CountsPerOutRev) * 360.0f, 360.0f);
