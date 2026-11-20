@@ -10,7 +10,7 @@ const int MotPin1 = D4;
 const int MotPin2 = D5;
 
 double dt = 0, integral = 0, previous = 0, output = 0;
-double kp = 5.0, ki = 0.5, kd = 0.05;
+double kp = 75.0, ki = 2.5, kd = 0.05;
 double setpoint = 0, actual = 0;
 unsigned long starttime = 0, oldtime = 0;
 
@@ -21,6 +21,11 @@ const float CountsPerOutRev = CountsPerRev * GearRatio;
 const unsigned long interval = 10;   
 const int minPWM = 40;               
 const double deadzone = 1.0; //in degrees     
+
+int64_t oldCount = 0;
+double rpm = 0;          // raw output-shaft RPM
+double rpmFiltered = 0;  // smoothed output-shaft RPM
+const double rpmAlpha = 0.2;  // 0-1, lower = smoother but slower to respond
 
 ESP32Encoder encoder;
 
@@ -53,6 +58,13 @@ void loop()
 
   // Reading encoder
   int64_t nowCount = encoder.getCount();
+
+  int64_t deltaCount = nowCount - oldCount;
+  oldCount = nowCount;
+
+  rpm = ((double)deltaCount / CountsPerOutRev) / dt * 60.0;   // revs / sec * 60
+  rpmFiltered = rpmAlpha * rpm + (1.0 - rpmAlpha) * rpmFiltered;
+
   float angle = fmodf(((float)nowCount / CountsPerOutRev) * 360.0f, 360.0f);
   if (angle < 0) angle += 360.0f;
   actual = angle;
@@ -83,15 +95,17 @@ void loop()
   }
 
   // Debugging / testing
-  Serial.print(nowtime);
-  Serial.print(",");
-  Serial.print(setpoint);
-  Serial.print(",");
-  Serial.print(error);
-  Serial.print(",");
+  //Serial.print(nowtime);
+  //Serial.print(",");
+  //Serial.print(setpoint);
+  //Serial.print(",");
+  //Serial.print(error);
+  //Serial.print(",");
   //Serial.print(nowCount);
   //Serial.print(oldCount);
-  Serial.println(actual);
+  //Serial.print(actual);
+  //Serial.print(",");
+  //Serial.println(rpmFiltered);
 }
 
 double pid(double error)
@@ -111,6 +125,6 @@ double testing(unsigned long nowtime)
   if(nowtime - starttime <= 2000) {
     return 60;
   } else{
-    return 90;
+    return 240;
   }
 }
