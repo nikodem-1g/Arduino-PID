@@ -11,7 +11,7 @@ Tuning by trial and error got the hardware, firmware and measurement chain worki
 
 Every 10 ms the Arduino Nano ESP32 takes a target position (from a potentiometer or a predefined function), reads the shaft position from the encoder and computes a PID command. The command drives the motor through the L298N, and the encoder closes the loop.
 
-**Hardware**
+### Hardware
 
 | Part | Details |
 |---|---|
@@ -23,7 +23,7 @@ Every 10 ms the Arduino Nano ESP32 takes a target position (from a potentiometer
 
 The encoder and potentiometer run from 3.3 V. The motor runs from the 5 V USB rail through the L298N. All grounds are common. The schematic (KiCad) is in [`hardware/`](hardware/schematic).
 
-**Firmware**
+### Firmware
 
 The control loop runs non-blocking at 10 ms, using the measured interval rather than the nominal one in all calculations. Position feedback comes from [ESP32Encoder](https://github.com/madhephaestus/ESP32Encoder) with 4× quadrature decoding in the hardware pulse counter, giving 3576 counts per output revolution (12 counts per motor revolution × 298), or 0.10° resolution. The position error is wrapped to ±180° so the shaft always takes the shorter path, and a parallel-form PID controller with a clamped integral term converts it into a command in PWM units. That command is conditioned with a minimum PWM to overcome stiction and a ±1.0° dead zone that zeroes the output near the target. Finally, the sign of the command determines which L298N input receives the PWM signal, setting the motor direction.
 
