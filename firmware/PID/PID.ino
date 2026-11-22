@@ -10,7 +10,7 @@ const int MotPin1 = D4;
 const int MotPin2 = D5;
 
 double dt = 0, integral = 0, previous = 0, output = 0;
-double kp = 75.0, ki = 2.5, kd = 0.05;
+double kp = 75.0, ki = 2.5, kd = 0.5;
 double setpoint = 0, actual = 0;
 unsigned long starttime = 0, oldtime = 0;
 
@@ -18,9 +18,9 @@ const float CountsPerRev = 12.0f;
 const float GearRatio = 298.0f;
 const float CountsPerOutRev = CountsPerRev * GearRatio;
 
-const unsigned long interval = 10;   
-const int minPWM = 40;               
-const double deadzone = 1.0; //in degrees     
+const unsigned long interval = 20;   
+const int minPWM = 5;               
+const double deadzone = 0.5; //in degrees     
 
 int64_t oldCount = 0;
 double rpm = 0;          
@@ -51,10 +51,9 @@ void loop()
   oldtime = nowtime;
 
   // Mapping trimmer to angle
-  //setpoint = map(analogRead(PotPin), 0, 4095, 0, 360);
-
+  setpoint = map(analogRead(PotPin), 0, 4095, 0, 360);
   // Testing routine
-  setpoint = testing(nowtime);
+  //setpoint = testing(nowtime);
 
   // Reading encoder
   int64_t nowCount = encoder.getCount();
@@ -95,23 +94,23 @@ void loop()
   }
 
   // Debugging / testing
-  //Serial.print(nowtime);
-  //Serial.print(",");
-  //Serial.print(setpoint);
-  //Serial.print(",");
-  //Serial.print(error);
-  //Serial.print(",");
+  Serial.print(nowtime);
+  Serial.print(",");
+  Serial.print(setpoint);
+  Serial.print(",");
+  Serial.print(error);
+  Serial.print(",");
   //Serial.print(nowCount);
   //Serial.print(oldCount);
-  //Serial.print(actual);
-  //Serial.print(",");
-  //Serial.println(rpmFiltered);
+  Serial.print(actual);
+  Serial.print(",");
+  Serial.println(rpmFiltered);
 }
 
 double pid(double error)
 {
   integral += error * dt;
-  integral = constrain(integral, -200, 200); //prevents windup
+  integral = constrain(integral, -100, 100); //prevents windup
 
   double derivative = (error - previous) / dt;
   previous = error;
