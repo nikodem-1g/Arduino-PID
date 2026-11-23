@@ -2,7 +2,7 @@
 
 Closed-loop angular position control of a 298:1 micro DC gearmotor, using an Arduino Nano ESP32, an L298N H-bridge and a Pololu magnetic encoder. Built for EE12001 Design Skills, University of Bath, 2026.
 
-Technical reprt will be included after academic submission.
+Technical report will be included after academic submission.
 
 ## Reflections
 
